@@ -2,7 +2,7 @@
 layout: post
 title:  "A new blog and a C++ project in its infancy"
 date:   2017-12-26 06:59:15 -0500
-categories: blitzdg update
+categories: blog update
 ---
 I recently started a project written in C++ called blitzdg. It's a spin-off from my PhD work on discontinuous Galerkin (dg) methods and my goal is to do it *the right way* with MPI for distributed parallelism. 
 
