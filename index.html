@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>A new blog and a C++ project in its infancy</title>
-  <meta name="description" content="I recently started a project written in C++ called blitzdg. It’s a spin-off from my PhD work on discontinuous Galerkin (dg) methods and my goal is to do it t...">
+  <title>Derek Steinmoeller&#39;s GitHub blog</title>
+  <meta name="description" content="A simple blog site for blogging about dsteinmo&#39;s GitHub projects.">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://dsteinmo.github.io/blitzdg/update/2017/12/26/welcome-to-dsteinmo-blog.html">
+  <link rel="canonical" href="https://dsteinmo.github.io/">
   <link rel="alternate" type="application/rss+xml" title="Derek Steinmoeller&#39;s GitHub blog" href="/feed.xml">
   
   
@@ -43,7 +43,13 @@
           
             
             
+          
+            
+            
             <a class="page-link" href="/about/">About</a>
+            
+          
+            
             
           
             
@@ -61,38 +67,29 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+        <div class="home">
 
-  <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">A new blog and a C++ project in its infancy</h1>
-    <p class="post-meta">
-      <time datetime="2017-12-26T06:59:15-05:00" itemprop="datePublished">
-        
-        Dec 26, 2017
-      </time>
-      </p>
-  </header>
-
-  <div class="post-content" itemprop="articleBody">
-    <p>I recently started a project written in C++ called blitzdg. It’s a spin-off from my PhD work on discontinuous Galerkin (dg) methods and my goal is to do it <em>the right way</em> with MPI for distributed parallelism.</p>
-
-<p>I’m learning a lot about the various academic C libraries out there like <code class="highlighter-rouge">METIS</code> for mesh partitioning and <code class="highlighter-rouge">UMFPACK</code> for sparse matrix solvers. I’m also learning about the power of C++ that is unleashed by <code class="highlighter-rouge">boost</code> which adds loads of functionality!</p>
-
-<p>My industrial work experience has familiarized me with build automation tools and continuous integration (CI) platforms. <code class="highlighter-rouge">blitzdg</code> uses <a href="https://travis-ci.org/dsteinmo/blitzdg">travis-ci</a> for CI, and good old-fashioned GNU Make for its build. I’ve also integrated <a href="https://coveralls.io/github/dsteinmo/blitzdg">coveralls</a> for tracking the percentage of code covered by the unit tests as the project matures.</p>
-
-<p>I won’t go too deep into the project’s code right now, but as a starting point, here’s a call out to the <code class="highlighter-rouge">UMFPACK</code> C library for factorizing a compressed sparse matrix with pre-computed numeric factors LU.</p>
-
-<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// ...
-</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Solving Ax = b.."</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-<span class="n">umfpack_di_solve</span> <span class="p">(</span><span class="n">UMFPACK_A</span><span class="p">,</span> <span class="n">Ap</span><span class="p">,</span> <span class="n">Ai</span><span class="p">,</span> <span class="n">Ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">null</span><span class="p">);</span>
-<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Done."</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span></code></pre></figure>
-
-<p>Check out the project’s repoitory at <a href="https://github.com/dsteinmo/blitzdg/">https://github.com/dsteinmo/blitzdg/</a>.</p>
-
-  </div>
-
+  <h1 class="page-heading">Posts</h1>
   
-</article>
+  
+
+
+  <ul class="post-list">
+    
+      <li>
+        
+        <span class="post-meta">Dec 26, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/blitzdg/update/2017/12/26/welcome-to-dsteinmo-blog.html">A new blog and a C++ project in its infancy</a>
+        </h2>
+      </li>
+    
+  </ul>
+
+  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
+
+</div>
 
       </div>
     </main>
