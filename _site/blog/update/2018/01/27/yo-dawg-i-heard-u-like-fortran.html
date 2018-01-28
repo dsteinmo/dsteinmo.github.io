@@ -117,22 +117,28 @@
 <p>Questions you might have:</p>
 
 <ol>
-  <li>Why is it wrapped in an <code class="highlighter-rouge">extern "C" {}</code> block?</li>
+  <li>
+    <p><em>Why is it wrapped in an <code class="highlighter-rouge">extern "C" {}</code> block?</em></p>
+
+    <ul>
+      <li>This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.</li>
+    </ul>
+  </li>
+  <li>
+    <p><em>Why is there an underscore after the function’s name?</em></p>
+
+    <ul>
+      <li>Fortran compilers like <code class="highlighter-rouge">gfortran</code> will usually append an underscore to the routine’s name in the object file. There is a good discussion on Fortran/C++ interoperability <a href="http://www.yolinux.com/TUTORIALS/LinuxTutorialMixingFortranAndC.html">here</a>. Thus, in order for the linker to find the code associated with our function, we append an underscore to the name.</li>
+    </ul>
+  </li>
+  <li>
+    <p><em>Why are all the arguments pointers?</em></p>
+
+    <ul>
+      <li>This is a difference between how C/C++ and Fortran compilers work. C/C++ passes arguments by value. Fortran always passes arguments by reference. Therefore, the C++ declaration of the Fortran routine contains a pointer in every argument.</li>
+    </ul>
+  </li>
 </ol>
-
-<p>This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.</p>
-
-<ol>
-  <li>Why is there an underscore after the function’s name?</li>
-</ol>
-
-<p>Fortran compilers like <code class="highlighter-rouge">gfortran</code> will usually append an underscore to the routine’s name in the object file. There is a good discussion on Fortran/C++ interoperability <a href="http://www.yolinux.com/TUTORIALS/LinuxTutorialMixingFortranAndC.html">here</a>. Thus, in order for the linker to find the code associated with our function, we append an underscore to the name.</p>
-
-<ol>
-  <li>Why are all the arguments pointers?</li>
-</ol>
-
-<p>This is a difference between how C/C++ and Fortran compilers work. C/C++ passes arguments by value. Fortran always passes arguments by reference. Therefore, the C++ declaration of the Fortran routine contains a pointer in every argument.</p>
 
 <h3 id="calling-a-lapack-routine-from-cc-code">Calling a LAPACK routine from C/C++ code</h3>
 

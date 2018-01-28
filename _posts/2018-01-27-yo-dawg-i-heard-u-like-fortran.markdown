@@ -23,17 +23,17 @@ extern "C" {
 
 Questions you might have:
 
-1. Why is it wrapped in an `extern "C" {}` block?
+1. *Why is it wrapped in an `extern "C" {}` block?*
 
-This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.
+    * This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.
 
-2. Why is there an underscore after the function's name?
+2. *Why is there an underscore after the function's name?*
 
-Fortran compilers like `gfortran` will usually append an underscore to the routine's name in the object file. There is a good discussion on Fortran/C++ interoperability [here](http://www.yolinux.com/TUTORIALS/LinuxTutorialMixingFortranAndC.html). Thus, in order for the linker to find the code associated with our function, we append an underscore to the name.
+    * Fortran compilers like `gfortran` will usually append an underscore to the routine's name in the object file. There is a good discussion on Fortran/C++ interoperability [here](http://www.yolinux.com/TUTORIALS/LinuxTutorialMixingFortranAndC.html). Thus, in order for the linker to find the code associated with our function, we append an underscore to the name.
 
-3. Why are all the arguments pointers?
+3. *Why are all the arguments pointers?*
 
-This is a difference between how C/C++ and Fortran compilers work. C/C++ passes arguments by value. Fortran always passes arguments by reference. Therefore, the C++ declaration of the Fortran routine contains a pointer in every argument.
+    * This is a difference between how C/C++ and Fortran compilers work. C/C++ passes arguments by value. Fortran always passes arguments by reference. Therefore, the C++ declaration of the Fortran routine contains a pointer in every argument.
 
 ### Calling a LAPACK routine from C/C++ code
 
