@@ -6,11 +6,11 @@ categories: blog update
 ---
 From my grad school days, I had heard that it was a common practice to mix C/C++ code with Fortran libraries such as `LAPACK` or `BLAS`. So I set about trying to leverage `LAPACK`'s eigenvalue solver routines for `blitzdg`'s EigenSolver class.
 
-The process wasn't overly challenging, but there were some intracies that needed special attention. I'll spell those out here in hopes that it may help someone in the future, or that it will serve as a reference for myself.
+The process wasn't overly challenging, but there were some intricacies that needed special attention. I'll spell those out here in hopes that it may help someone in the future, or that it will serve as a reference for myself.
 
 ### Declaring an external Fortran routine as a C/C++ function
 
-In my case, I want to call the Fortran routine called `dsyevd`, which is a work-horse for solving eigenvalue problems of real, symmetric matrices. Its official API doc is [here](http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen_ga77dfa610458b6c9bd7db52533bfd53a1.html#ga77dfa610458b6c9bd7db52533bfd53a1).
+In my case, I want to call the Fortran routine called `dsyevd`, which is a workhorse for solving eigenvalue problems of real, symmetric matrices. Its official API doc is [here](http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen_ga77dfa610458b6c9bd7db52533bfd53a1.html#ga77dfa610458b6c9bd7db52533bfd53a1).
 
 In order to call `dsyevd` in my C++ code, I need to declare a function with the same signature as the Fortran routine, but it's a bit more convoluted than that. Here is what the declaration code ends up looking like:
 
@@ -25,7 +25,7 @@ Questions you might have:
 
 1. *Why is it wrapped in an `extern "C" {}` block?*
 
-    * This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.
+    * This tells the compiler to give the function C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.
 
 2. *Why is there an underscore after the function's name?*
 
@@ -37,7 +37,7 @@ Questions you might have:
 
 ### Calling a LAPACK routine from C/C++ code
 
-The next step is to actually call the C function we declared which links to a Fortran routine in a C++ method. The code looks like this: 
+The next step is to actually call the C function we declared which links to a Fortran routine in a C++ method. The code looks like this:
 
 {% highlight C++ %}
 /**
@@ -81,8 +81,8 @@ void EigenSolver::solve(const Array<double,2> & A, Array<double,1> & eigenvalues
 }
 {% endhighlight %}
 
-First, we set some parameters and convert the blitz matrix `A` to a contiguous memory block (a 1D array) in `MatrixConverter.fullToPodArray`. 
+First, we set some parameters and convert the blitz matrix `A` to a contiguous memory block (a 1D array) in `MatrixConverter.fullToPodArray`.
 
-The `dsyevd_` function then gets called twice. First to determine the optimal workspace parameters, then to actually solve the eigenvalue problem. The Fortran routine stores the resulting eigenvectors in the storage allocated by the array `Apod` (Here, `pod` = plain-old data-type). 
+The `dsyevd_` function then gets called twice. First to determine the optimal workspace parameters, then to actually solve the eigenvalue problem. The Fortran routine stores the resulting eigenvectors in the storage allocated by the array `Apod` (Here, `pod` = plain-old data-type).
 
 The eigenvectors are then converted from `pod` format to 2D blitz-array format, and similarly the eigenvalues are put into the 1D blitz array that the caller passes in.
