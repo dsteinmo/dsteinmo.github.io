@@ -101,11 +101,11 @@
   <div class="post-content" itemprop="articleBody">
     <p>From my grad school days, I had heard that it was a common practice to mix C/C++ code with Fortran libraries such as <code class="highlighter-rouge">LAPACK</code> or <code class="highlighter-rouge">BLAS</code>. So I set about trying to leverage <code class="highlighter-rouge">LAPACK</code>’s eigenvalue solver routines for <code class="highlighter-rouge">blitzdg</code>’s EigenSolver class.</p>
 
-<p>The process wasn’t overly challenging, but there were some intracies that needed special attention. I’ll spell those out here in hopes that it may help someone in the future, or that it will serve as a reference for myself.</p>
+<p>The process wasn’t overly challenging, but there were some intricacies that needed special attention. I’ll spell those out here in hopes that it may help someone in the future, or that it will serve as a reference for myself.</p>
 
 <h3 id="declaring-an-external-fortran-routine-as-a-cc-function">Declaring an external Fortran routine as a C/C++ function</h3>
 
-<p>In my case, I want to call the Fortran routine called <code class="highlighter-rouge">dsyevd</code>, which is a work-horse for solving eigenvalue problems of real, symmetric matrices. Its official API doc is <a href="http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen_ga77dfa610458b6c9bd7db52533bfd53a1.html#ga77dfa610458b6c9bd7db52533bfd53a1">here</a>.</p>
+<p>In my case, I want to call the Fortran routine called <code class="highlighter-rouge">dsyevd</code>, which is a workhorse for solving eigenvalue problems of real, symmetric matrices. Its official API doc is <a href="http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen_ga77dfa610458b6c9bd7db52533bfd53a1.html#ga77dfa610458b6c9bd7db52533bfd53a1">here</a>.</p>
 
 <p>In order to call <code class="highlighter-rouge">dsyevd</code> in my C++ code, I need to declare a function with the same signature as the Fortran routine, but it’s a bit more convoluted than that. Here is what the declaration code ends up looking like:</p>
 
@@ -121,7 +121,7 @@
     <p><em>Why is it wrapped in an <code class="highlighter-rouge">extern "C" {}</code> block?</em></p>
 
     <ul>
-      <li>This tells the compiler to give the funciton C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.</li>
+      <li>This tells the compiler to give the function C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.</li>
     </ul>
   </li>
   <li>
