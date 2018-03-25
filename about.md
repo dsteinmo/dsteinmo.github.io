@@ -4,6 +4,10 @@ title: About
 permalink: /about/
 ---
 
-Derek Steinmoeller is a Canadian software developer, and he holds a PhD in Applied Math from the University of Waterloo. 
+<h3>Derek Steinmoeller, B.Math,  M.Math, Ph.D.</h3>
+<img src="/assets/img/Derek.jpg" alt="Derek" title="Derek Steinmoeller"/>
 
-He enjoys coding in a variety of languagues including C/C++, C#, Python, Go, and JavaScript (mostly node).
+<p>
+Derek is a Ph.D. graduate from the Applied Math Department of the University of Waterloo. His Ph.D. advisors were <a href="https://www.math.uwaterloo.ca/~mmstastn">Marek Stastna</a> and <a href="http://www.math.uwaterloo.ca/~kglamb/kglamb_publications.html">Kevin Lamb</a>. He is an alumnus of the <a href="https://www.math.uwaterloo.ca/AM_Dept/research/fluid_group.shtml">Environmental and Geophysical Fluid Dynamics Group</a>.</p>
+
+Derek is a currently a full-time software developer. He enjoys developing in a variety of languagues including C/C++, C#, Python, Go, and JavaScript (mostly Node.js).
