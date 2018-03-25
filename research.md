@@ -27,7 +27,7 @@ Fluids group talk, Fall 2013: <a href="/assets/pdf/derek_fluidsgrad2.pdf">Calcul
 
 Gene Golub Siam Summer School 2012 Poster Presentation: <a href="/assets/pdf/g2s3_poster.pdf">High-Order Curvilinear Element Methods in Lake Modelling</a>
 
-Fluids group talk, Fall 2012: <a href="https://belize.math.uwaterloo.ca/mediawiki/images/9/91/FluidsTalk_Derek.pdf">Dealing with insignificant fast waves in numerical models: Kinematic constraints vs. implicit time-stepping</a>
+Fluids group talk, Fall 2012: <a href="https://wiki.math.uwaterloo.ca/fluidswiki/images/9/91/FluidsTalk_Derek.pdf">Dealing with insignificant fast waves in numerical models: Kinematic constraints vs. implicit time-stepping</a>
 
 Ph.D. Project Proposal, Spring 2010: <a href="/assets/pdf/precomp.pdf">Modelling Internal Wave Dynamics using Unstructured Grids</a> (Note that animations won't work, I may put them up here later)
 
@@ -71,7 +71,7 @@ D.T. Steinmoeller, S.J.D. D'Alessio, and F.J. Poulin. Prograde and retrograde fl
 
 <a href="https://math.uwaterloo.ca/applied-mathematics/future-undergraduates/what-you-can-learn-applied-mathematics/continuum-fluid-mechanics">Continuum and Fluid Mechanics</a> - Introductory materials for interested undergrads.
 
-<a href="https://belize.math.uwaterloo.ca/mediawiki/index.php/Main_Page">FluidsWiki</a> - A compendium of fluids-related materials posted by fluids group members.
+<a href="https://wiki.math.uwaterloo.ca/fluidswiki/index.php?title=Main_Page">FluidsWiki</a> - A compendium of fluids-related materials posted by fluids group members.
 
 <a href="http://www.ticalc.org/archives/files/authors/30/3056.html">My TiCalc authors page</a> - I wrote some BASIC programs when I was a teenager for Texas Instrument graphing calculators, but it looks like I lost the source code to them, booo!
 <br>
