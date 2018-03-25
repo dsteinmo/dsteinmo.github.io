@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Yo dawg, I heard u like Fortran"
+title:  "Calling Fortran routines from C/C++ code"
 date:   2018-01-27 22:30:33 -0500
 categories: blog update
 ---

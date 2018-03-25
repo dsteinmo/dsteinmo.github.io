@@ -1,0 +1,14 @@
+<p>I recently started a project written in C++ called blitzdg. It’s a spin-off from my PhD work on discontinuous Galerkin (dg) methods and my goal is to do it <em>the right way</em> with MPI for distributed parallelism.</p>
+
+<p>I’m learning a lot about the various academic C libraries out there like <code class="highlighter-rouge">METIS</code> for mesh partitioning and <code class="highlighter-rouge">UMFPACK</code> for sparse matrix solvers. I’m also learning about the power of C++ that is unleashed by <code class="highlighter-rouge">boost</code> which adds loads of functionality!</p>
+
+<p>My industrial work experience has familiarized me with build automation tools and continuous integration (CI) platforms. <code class="highlighter-rouge">blitzdg</code> uses <a href="https://travis-ci.org/dsteinmo/blitzdg">travis-ci</a> for CI, and good old-fashioned GNU Make for its build. I’ve also integrated <a href="https://coveralls.io/github/dsteinmo/blitzdg">coveralls</a> for tracking the percentage of code covered by the unit tests as the project matures.</p>
+
+<p>I won’t go too deep into the project’s code right now, but as a starting point, here’s a call out to the <code class="highlighter-rouge">UMFPACK</code> C library for factorizing a compressed sparse matrix with pre-computed numeric factors LU.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="c1">// ...
+</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Solving Ax = b.."</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="n">umfpack_di_solve</span> <span class="p">(</span><span class="n">UMFPACK_A</span><span class="p">,</span> <span class="n">Ap</span><span class="p">,</span> <span class="n">Ai</span><span class="p">,</span> <span class="n">Ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">,</span> <span class="n">null</span><span class="p">,</span> <span class="n">null</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Done."</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span></code></pre></figure>
+
+<p>Check out the project’s repoitory at <a href="https://github.com/dsteinmo/blitzdg/">https://github.com/dsteinmo/blitzdg/</a>.</p>

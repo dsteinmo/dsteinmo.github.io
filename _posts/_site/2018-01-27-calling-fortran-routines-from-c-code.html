@@ -1,0 +1,90 @@
+<p>From my grad school days, I had heard that it was a common practice to mix C/C++ code with Fortran libraries such as <code class="highlighter-rouge">LAPACK</code> or <code class="highlighter-rouge">BLAS</code>. So I set about trying to leverage <code class="highlighter-rouge">LAPACK</code>’s eigenvalue solver routines for <code class="highlighter-rouge">blitzdg</code>’s EigenSolver class.</p>
+
+<p>The process wasn’t overly challenging, but there were some intricacies that needed special attention. I’ll spell those out here in hopes that it may help someone in the future, or that it will serve as a reference for myself.</p>
+
+<h3 id="declaring-an-external-fortran-routine-as-a-cc-function">Declaring an external Fortran routine as a C/C++ function</h3>
+
+<p>In my case, I want to call the Fortran routine called <code class="highlighter-rouge">dsyevd</code>, which is a workhorse for solving eigenvalue problems of real, symmetric matrices. Its official API doc is <a href="http://www.netlib.org/lapack/explore-html/d2/d8a/group__double_s_yeigen_ga77dfa610458b6c9bd7db52533bfd53a1.html#ga77dfa610458b6c9bd7db52533bfd53a1">here</a>.</p>
+
+<p>In order to call <code class="highlighter-rouge">dsyevd</code> in my C++ code, I need to declare a function with the same signature as the Fortran routine, but it’s a bit more convoluted than that. Here is what the declaration code ends up looking like:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+    <span class="kt">void</span> <span class="n">dsyevd_</span><span class="p">(</span> <span class="kt">char</span><span class="o">*</span> <span class="n">jobz</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">uplo</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="kt">double</span><span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">lda</span><span class="p">,</span>
+                <span class="kt">double</span><span class="o">*</span> <span class="n">w</span><span class="p">,</span> <span class="kt">double</span><span class="o">*</span> <span class="n">work</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">lwork</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">iwork</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">liwork</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">info</span> <span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Questions you might have:</p>
+
+<ol>
+  <li>
+    <p><em>Why is it wrapped in an <code class="highlighter-rouge">extern "C" {}</code> block?</em></p>
+
+    <ul>
+      <li>This tells the compiler to give the function C-style linkage. C++ compilers will often mangle the name. This is bad, because we need the function name to match up with the Fortran routine, otherwise the linker will not associate the two pieces of code.</li>
+    </ul>
+  </li>
+  <li>
+    <p><em>Why is there an underscore after the function’s name?</em></p>
+
+    <ul>
+      <li>Fortran compilers like <code class="highlighter-rouge">gfortran</code> will usually append an underscore to the routine’s name in the object file. There is a good discussion on Fortran/C++ interoperability <a href="http://www.yolinux.com/TUTORIALS/LinuxTutorialMixingFortranAndC.html">here</a>. Thus, in order for the linker to find the code associated with our function, we append an underscore to the name.</li>
+    </ul>
+  </li>
+  <li>
+    <p><em>Why are all the arguments pointers?</em></p>
+
+    <ul>
+      <li>This is a difference between how C/C++ and Fortran compilers work. C/C++ passes arguments by value. Fortran always passes arguments by reference. Therefore, the C++ declaration of the Fortran routine contains a pointer in every argument.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="calling-a-lapack-routine-from-cc-code">Calling a LAPACK routine from C/C++ code</h3>
+
+<p>The next step is to actually call the C function we declared which links to a Fortran routine in a C++ method. The code looks like this:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cm">/**
+ * Solve Ax=λx using LAPACK. Eigenvalues are stored in reference 'eigenvalues' and eigenvectors are stored column-wise
+ * in reference 'eigenvectors.'
+ */</span>
+<span class="kt">void</span> <span class="n">EigenSolver</span><span class="o">::</span><span class="n">solve</span><span class="p">(</span><span class="k">const</span> <span class="n">Array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="mi">2</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">A</span><span class="p">,</span> <span class="n">Array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">Array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">eigenvectors</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">int</span> <span class="n">sz</span> <span class="o">=</span> <span class="n">A</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">lda</span> <span class="o">=</span> <span class="n">sz</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">iwkopt</span><span class="p">;</span>
+
+    <span class="kt">double</span> <span class="n">ww</span><span class="p">[</span><span class="n">sz</span><span class="p">];</span>
+    <span class="kt">double</span> <span class="n">wkopt</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">lwork</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">liwork</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">info</span><span class="p">;</span>
+
+    <span class="kt">char</span> <span class="n">JOBZ</span> <span class="o">=</span> <span class="sc">'V'</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">UPLO</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"UP"</span><span class="p">;</span>
+
+    <span class="kt">double</span> <span class="o">*</span> <span class="n">Apod</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">sz</span><span class="o">*</span><span class="n">lda</span><span class="p">];</span>
+
+    <span class="n">MatrixConverter</span><span class="p">.</span><span class="n">fullToPodArray</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">Apod</span><span class="p">);</span>
+
+    <span class="cm">/* Determining optimal workspace parameters */</span>
+    <span class="n">dsyevd_</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">JOBZ</span><span class="p">,</span> <span class="n">UPLO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sz</span><span class="p">,</span> <span class="n">Apod</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lda</span><span class="p">,</span> <span class="n">ww</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wkopt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lwork</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">iwkopt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">liwork</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">info</span> <span class="p">);</span>
+
+    <span class="n">lwork</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">wkopt</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="o">*</span> <span class="n">work</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">lwork</span><span class="p">];</span>
+    <span class="n">liwork</span> <span class="o">=</span> <span class="n">iwkopt</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="o">*</span> <span class="n">iwork</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">liwork</span><span class="p">];</span>
+
+    <span class="cm">/* Solve eigenproblem */</span>
+    <span class="n">dsyevd_</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">JOBZ</span><span class="p">,</span> <span class="n">UPLO</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sz</span><span class="p">,</span> <span class="n">Apod</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lda</span><span class="p">,</span> <span class="n">ww</span><span class="p">,</span> <span class="n">work</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">lwork</span><span class="p">,</span> <span class="n">iwork</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">liwork</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">info</span> <span class="p">);</span>
+
+    <span class="n">MatrixConverter</span><span class="p">.</span><span class="n">podArrayToFull</span><span class="p">(</span><span class="n">Apod</span><span class="p">,</span> <span class="n">eigenvectors</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">sz</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">eigenvalues</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">ww</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>First, we set some parameters and convert the blitz matrix <code class="highlighter-rouge">A</code> to a contiguous memory block (a 1D array) in <code class="highlighter-rouge">MatrixConverter.fullToPodArray</code>.</p>
+
+<p>The <code class="highlighter-rouge">dsyevd_</code> function then gets called twice. First to determine the optimal workspace parameters, then to actually solve the eigenvalue problem. The Fortran routine stores the resulting eigenvectors in the storage allocated by the array <code class="highlighter-rouge">Apod</code> (Here, <code class="highlighter-rouge">pod</code> = plain-old data-type).</p>
+
+<p>The eigenvectors are then converted from <code class="highlighter-rouge">pod</code> format to 2D blitz-array format, and similarly the eigenvalues are put into the 1D blitz array that the caller passes in.</p>
