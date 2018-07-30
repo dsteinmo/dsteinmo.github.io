@@ -57,7 +57,7 @@ D.T. Steinmoeller, S.J.D. D'Alessio, and F.J. Poulin. Prograde and retrograde fl
 
 <a href="http://wqcg.ca/">Waterloo Quantitative Consulting Group</a> (WQCG) - A consulting company that I started in Winter 2016.
 
-<a href="https://crypt.ogapher.ca">crypt.ogapher.ca</a> crypt.ographer - A website all about crypto and online security.
+<a href="https://crypt.ographer.ca">crypt.ographer</a> A website all about crypto and online security.
 
 <a href="http://michaeljswart.com/">michaeljswart.com</a> - Michael J. Swart's blog. Lots of good information on databases.
 
