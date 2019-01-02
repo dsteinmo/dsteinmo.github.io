@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Derek Steinmoeller&#39;s blog</title>
-  <meta name="description" content="A simple site for blogging about dsteinmo&#39;s GitHub and academic research projects.">
+  <title>blitzdg turns one. Adds support for 2D triangular meshes.</title>
+  <meta name="description" content="It’s hard to believe that we (the WQCG) has been working on blitzdg for over a year now. Now, this has not been a full year of “work days” in the 8-hour sens...">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://dsteinmo.github.io/">
+  <link rel="canonical" href="https://dsteinmo.github.io/blog/update/2019/01/01/blitzdg-turns-one.html">
   <link rel="alternate" type="application/rss+xml" title="Derek Steinmoeller&#39;s blog" href="/feed.xml">
   
   
@@ -107,56 +107,88 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div class="home">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <h1 class="page-heading">Posts</h1>
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">blitzdg turns one. Adds support for 2D triangular meshes.</h1>
+    <p class="post-meta">
+      <time datetime="2019-01-01T13:37:00-05:00" itemprop="datePublished">
+        
+        Jan 1, 2019
+      </time>
+      </p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>It’s hard to believe that we (<a href="https://wqcg.ca">the WQCG</a>) has been working on <a href="https://github.com/WQCG/blitzdg">blitzdg</a> for over a year now. Now, this has not been a full year of “work days” in the 8-hour sense, but it’s been a year of dedicated work nonetheless, and we have come a long way. In this post, I’ll delve into what we’ve done, what we’ve learned, what it all means, and what’s next.</p>
+
+<h2 id="what-weve-done">What we’ve done</h2>
+
+<p>Although it didn’t take too long to get one-dimensional equation solvers working within the little C++ world we created, it was a much bigger lift to get something that we could show off in 2D. There were times of frustration, even exhaustion, but in the end we have reached a milestone that we can be proud of - a working two-dimensional shallow water solver that (in principle) can work in arbitrary geometries.</p>
+
+<p>The short-list to get us to where we are goes as follows:</p>
+
+<ul>
+  <li>1D wave solvers (advection and burgers equations).</li>
+  <li>GMRES linear iterative solver, and proof-of-concept 1D elliptic solver (Poisson’s equation).</li>
+  <li>Triangular grid representation in C++; Gmsh .geo file parsing.</li>
+  <li>Explicit nodal points construction and orthogonal polynomials on the triangle.</li>
+  <li>2D generalized Vandermonde matrices; Surface integral lifting operator.</li>
+  <li>Mapping to standard triangle, with geometric factor calculation.</li>
+  <li>Volume-to-Face masks; boundary node masks.</li>
+  <li>2D 4th-Order Runge-Kutta Shallow Water solver.</li>
+</ul>
+
+<p>It may not sound like a lot, but take into account the fact that we’ve maintained 96% code coverage with BDD-style unit tests. Add to that all the hours lost to debugging silly transcription errors and memory-reference errors, trust me, it is a lot.</p>
+
+<h2 id="what-weve-learned">What we’ve learned</h2>
+
+<h4 id="cross-platform-native-development-is-hard">Cross-platform native development is hard.</h4>
+
+<p>We shouldn’t have to explain this one too hard, as it kind of goes without saying. Many of the scientific packages we rely on don’t have MSVC builds on Windows, and their mingw support leaves something to be desires. Initially, <code class="highlighter-rouge">blitzdg</code> had two CI processes - TravisCI for Linux and AppVeyor for Windows.</p>
+
+<p>Inevitably, it became an exercise in hair pulling to get builds to pass both CI processes in unison before a merge to master. Meanwhile, CircleCI took a huge leap forward with their docker container builds that allowed for a lot of dependency-caching, it was only natural to move over to Circle. This happened in two phases. First the Travis/Linux build was moved into a Circle container. Second, we killed off the windows build by making the choice to cross-compile to mingw from within a linux container. It wasn’t particularly pretty, but in the end we’ve pulled it off and will only need to mess with it when we add or kill dependencies.</p>
+
+<h4 id="even-if-a-library-is-abstracting-away-the-contiguous-memory-representation-of-your-2d3d-data-structures-you-should-still-think-about-the-memory-block-representation-of-your-arrays">Even if a library is abstracting away the contiguous memory representation of your 2D/3D data structures, you should still think about the memory-block representation of your arrays.</h4>
+
+<p>Yeah, yeah, <code class="highlighter-rouge">blitz</code> is great and everything, but that doesn’t mean you completely avoid cache-thrashing and performance hits for free.</p>
+
+<p>2D and 3D contiguous arrays just don’t exist in C/C++. C arrays are row-major, Fortran arrays are column-major. You have to keep this in mind when making calls between the languages. Also, I’ve learned that the nesting loops in the wrong order can cause huge problems. Always think about what your array actually looks like in memory, and when you might be missing the cache. If it’s possible to make a cache-miss, then you are probably doing it.</p>
+
+<h4 id="keep-up-that-test-coverage-youll-thank-yourself-later">Keep up that test coverage, you’ll thank yourself later.</h4>
+
+<p>It’s too easy to say “yeah, I’m pretty sure this is right.” Or, “Something else will tell me when this is broken.” It saves time and headaches in the long run to write behaviour-driven test clauses with proper assertions. I know you’ve probably heard it before, but it’s worth saying again.</p>
+
+<p>You may also be drawn to omit tests on the grounds that, “what I’m writing is small, and not worthy of a test.” However, if it’s worth writing code for it, then it must be some piece of a larger puzzle, and without tests that assert correctness, you leave room for skeletons to emerge from the closet later down the development road. Do yourself a favour, and fully test (and assert the correctness of) your APIs!</p>
+
+<h2 id="what-it-all-means">What it all means</h2>
+
+<p>Well, it means hopefully we’re approaching a state where we become useful to somebody else, or even ourselves as scientists who want to consult on state-of-the-art numerics.</p>
+
+<p>As I learned in grad school, it’s a matter of sales savvy, confidence, and real-world data absorption to turn a toy code into an operational scientific model. We can do all these things, and we fully intend to.</p>
+
+<h2 id="whats-next">What’s next?</h2>
+
+<p>We’re still thinking about what the priority stack for 2019 looks like, but here’s a smattering of ideas that are outstanding and we would like to do in 2019.</p>
+
+<ul>
+  <li>Quadrilateral elements and nodes, and unstructured quad grids.</li>
+  <li>Kalman filtering tools for data assimilation.</li>
+  <li>Curvilinear elements.</li>
+  <li>NetCDF/Vtk output classes.</li>
+  <li>Incompressible Euler/Navier-Stokes equations solver in 2D, with modern DG stabilization techniques.</li>
+  <li>3D “layered” elements (i.e., structured in one of the coordinates).</li>
+  <li>3D solvers and models for lakes.</li>
+</ul>
+
+<p>Want to help? Want a feature? Want to bump something up the priority stack? Join the conversation on our <a href="https://wqcg.slack.com">slack workspace</a>. We’d love to hear from you and what scientific problems you’re working on!</p>
+
+<p><a href="https://www.google.com">I’m an inline-style link</a></p>
+
+  </div>
+
   
-  
-
-
-  <ul class="post-list">
-    
-      <li>
-        
-        <span class="post-meta">Jan 1, 2019</span>
-
-        <h2>
-          <a class="post-link" href="/blog/update/2019/01/01/blitzdg-turns-one.html">blitzdg turns one. Adds support for 2D triangular meshes.</a>
-        </h2>
-      </li>
-    
-      <li>
-        
-        <span class="post-meta">Mar 25, 2018</span>
-
-        <h2>
-          <a class="post-link" href="/blog/update/2018/03/25/programming-for-a-technical-audience.html">Developing Code for a Technical Audience</a>
-        </h2>
-      </li>
-    
-      <li>
-        
-        <span class="post-meta">Jan 27, 2018</span>
-
-        <h2>
-          <a class="post-link" href="/blog/update/2018/01/27/calling-fortran-routines-from-c-code.html">Calling Fortran routines from C/C++ code</a>
-        </h2>
-      </li>
-    
-      <li>
-        
-        <span class="post-meta">Dec 26, 2017</span>
-
-        <h2>
-          <a class="post-link" href="/blog/update/2017/12/26/welcome-to-dsteinmo-blog.html">A new blog and a C++ project in its infancy</a>
-        </h2>
-      </li>
-    
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p>
-
-</div>
+</article>
 
       </div>
     </main>

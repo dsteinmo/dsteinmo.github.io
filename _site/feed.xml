@@ -1,4 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://dsteinmo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://dsteinmo.github.io/" rel="alternate" type="text/html" /><updated>2018-08-13T16:15:34-04:00</updated><id>https://dsteinmo.github.io/</id><title type="html">Derek Steinmoeller’s blog</title><subtitle>A simple site for blogging about dsteinmo's GitHub and academic research projects.</subtitle><entry><title type="html">Developing Code for a Technical Audience</title><link href="https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience.html" rel="alternate" type="text/html" title="Developing Code for a Technical Audience" /><published>2018-03-25T14:10:33-04:00</published><updated>2018-03-25T14:10:33-04:00</updated><id>https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience</id><content type="html" xml:base="https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience.html">&lt;p&gt;Most novice programmers tend to write code for an audience of one - themselves. They often write unformatted and/or unreadable code that is indecipherable by anyone else. This is how I started out writing my &lt;code class=&quot;highlighter-rouge&quot;&gt;MATLAB&lt;/code&gt; and python scripts in grad school, and much of my code that’s left over from those days remains in this state.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="https://dsteinmo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://dsteinmo.github.io/" rel="alternate" type="text/html" /><updated>2019-01-01T20:24:53-05:00</updated><id>https://dsteinmo.github.io/</id><title type="html">Derek Steinmoeller’s blog</title><subtitle>A simple site for blogging about dsteinmo's GitHub and academic research projects.</subtitle><entry><title type="html">blitzdg turns one. Adds support for 2D triangular meshes.</title><link href="https://dsteinmo.github.io/blog/update/2019/01/01/blitzdg-turns-one.html" rel="alternate" type="text/html" title="blitzdg turns one. Adds support for 2D triangular meshes." /><published>2019-01-01T13:37:00-05:00</published><updated>2019-01-01T13:37:00-05:00</updated><id>https://dsteinmo.github.io/blog/update/2019/01/01/blitzdg-turns-one</id><content type="html" xml:base="https://dsteinmo.github.io/blog/update/2019/01/01/blitzdg-turns-one.html">&lt;p&gt;It’s hard to believe that we (&lt;a href=&quot;https://wqcg.ca&quot;&gt;the WQCG&lt;/a&gt;) has been working on &lt;a href=&quot;https://github.com/WQCG/blitzdg&quot;&gt;blitzdg&lt;/a&gt; for over a year now. Now, this has not been a full year of “work days” in the 8-hour sense, but it’s been a year of dedicated work nonetheless, and we have come a long way. In this post, I’ll delve into what we’ve done, what we’ve learned, what it all means, and what’s next.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-weve-done&quot;&gt;What we’ve done&lt;/h2&gt;
+
+&lt;p&gt;Although it didn’t take too long to get one-dimensional equation solvers working within the little C++ world we created, it was a much bigger lift to get something that we could show off in 2D. There were times of frustration, even exhaustion, but in the end we have reached a milestone that we can be proud of - a working two-dimensional shallow water solver that (in principle) can work in arbitrary geometries.&lt;/p&gt;
+
+&lt;p&gt;The short-list to get us to where we are goes as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1D wave solvers (advection and burgers equations).&lt;/li&gt;
+  &lt;li&gt;GMRES linear iterative solver, and proof-of-concept 1D elliptic solver (Poisson’s equation).&lt;/li&gt;
+  &lt;li&gt;Triangular grid representation in C++; Gmsh .geo file parsing.&lt;/li&gt;
+  &lt;li&gt;Explicit nodal points construction and orthogonal polynomials on the triangle.&lt;/li&gt;
+  &lt;li&gt;2D generalized Vandermonde matrices; Surface integral lifting operator.&lt;/li&gt;
+  &lt;li&gt;Mapping to standard triangle, with geometric factor calculation.&lt;/li&gt;
+  &lt;li&gt;Volume-to-Face masks; boundary node masks.&lt;/li&gt;
+  &lt;li&gt;2D 4th-Order Runge-Kutta Shallow Water solver.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It may not sound like a lot, but take into account the fact that we’ve maintained 96% code coverage with BDD-style unit tests. Add to that all the hours lost to debugging silly transcription errors and memory-reference errors, trust me, it is a lot.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-weve-learned&quot;&gt;What we’ve learned&lt;/h2&gt;
+
+&lt;h4 id=&quot;cross-platform-native-development-is-hard&quot;&gt;Cross-platform native development is hard.&lt;/h4&gt;
+
+&lt;p&gt;We shouldn’t have to explain this one too hard, as it kind of goes without saying. Many of the scientific packages we rely on don’t have MSVC builds on Windows, and their mingw support leaves something to be desires. Initially, &lt;code class=&quot;highlighter-rouge&quot;&gt;blitzdg&lt;/code&gt; had two CI processes - TravisCI for Linux and AppVeyor for Windows.&lt;/p&gt;
+
+&lt;p&gt;Inevitably, it became an exercise in hair pulling to get builds to pass both CI processes in unison before a merge to master. Meanwhile, CircleCI took a huge leap forward with their docker container builds that allowed for a lot of dependency-caching, it was only natural to move over to Circle. This happened in two phases. First the Travis/Linux build was moved into a Circle container. Second, we killed off the windows build by making the choice to cross-compile to mingw from within a linux container. It wasn’t particularly pretty, but in the end we’ve pulled it off and will only need to mess with it when we add or kill dependencies.&lt;/p&gt;
+
+&lt;h4 id=&quot;even-if-a-library-is-abstracting-away-the-contiguous-memory-representation-of-your-2d3d-data-structures-you-should-still-think-about-the-memory-block-representation-of-your-arrays&quot;&gt;Even if a library is abstracting away the contiguous memory representation of your 2D/3D data structures, you should still think about the memory-block representation of your arrays.&lt;/h4&gt;
+
+&lt;p&gt;Yeah, yeah, &lt;code class=&quot;highlighter-rouge&quot;&gt;blitz&lt;/code&gt; is great and everything, but that doesn’t mean you completely avoid cache-thrashing and performance hits for free.&lt;/p&gt;
+
+&lt;p&gt;2D and 3D contiguous arrays just don’t exist in C/C++. C arrays are row-major, Fortran arrays are column-major. You have to keep this in mind when making calls between the languages. Also, I’ve learned that the nesting loops in the wrong order can cause huge problems. Always think about what your array actually looks like in memory, and when you might be missing the cache. If it’s possible to make a cache-miss, then you are probably doing it.&lt;/p&gt;
+
+&lt;h4 id=&quot;keep-up-that-test-coverage-youll-thank-yourself-later&quot;&gt;Keep up that test coverage, you’ll thank yourself later.&lt;/h4&gt;
+
+&lt;p&gt;It’s too easy to say “yeah, I’m pretty sure this is right.” Or, “Something else will tell me when this is broken.” It saves time and headaches in the long run to write behaviour-driven test clauses with proper assertions. I know you’ve probably heard it before, but it’s worth saying again.&lt;/p&gt;
+
+&lt;p&gt;You may also be drawn to omit tests on the grounds that, “what I’m writing is small, and not worthy of a test.” However, if it’s worth writing code for it, then it must be some piece of a larger puzzle, and without tests that assert correctness, you leave room for skeletons to emerge from the closet later down the development road. Do yourself a favour, and fully test (and assert the correctness of) your APIs!&lt;/p&gt;
+
+&lt;h2 id=&quot;what-it-all-means&quot;&gt;What it all means&lt;/h2&gt;
+
+&lt;p&gt;Well, it means hopefully we’re approaching a state where we become useful to somebody else, or even ourselves as scientists who want to consult on state-of-the-art numerics.&lt;/p&gt;
+
+&lt;p&gt;As I learned in grad school, it’s a matter of sales savvy, confidence, and real-world data absorption to turn a toy code into an operational scientific model. We can do all these things, and we fully intend to.&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-next&quot;&gt;What’s next?&lt;/h2&gt;
+
+&lt;p&gt;We’re still thinking about what the priority stack for 2019 looks like, but here’s a smattering of ideas that are outstanding and we would like to do in 2019.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Quadrilateral elements and nodes, and unstructured quad grids.&lt;/li&gt;
+  &lt;li&gt;Kalman filtering tools for data assimilation.&lt;/li&gt;
+  &lt;li&gt;Curvilinear elements.&lt;/li&gt;
+  &lt;li&gt;NetCDF/Vtk output classes.&lt;/li&gt;
+  &lt;li&gt;Incompressible Euler/Navier-Stokes equations solver in 2D, with modern DG stabilization techniques.&lt;/li&gt;
+  &lt;li&gt;3D “layered” elements (i.e., structured in one of the coordinates).&lt;/li&gt;
+  &lt;li&gt;3D solvers and models for lakes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Want to help? Want a feature? Want to bump something up the priority stack? Join the conversation on our &lt;a href=&quot;https://wqcg.slack.com&quot;&gt;slack workspace&lt;/a&gt;. We’d love to hear from you and what scientific problems you’re working on!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.google.com&quot;&gt;I’m an inline-style link&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">It’s hard to believe that we (the WQCG) has been working on blitzdg for over a year now. Now, this has not been a full year of “work days” in the 8-hour sense, but it’s been a year of dedicated work nonetheless, and we have come a long way. In this post, I’ll delve into what we’ve done, what we’ve learned, what it all means, and what’s next.</summary></entry><entry><title type="html">Developing Code for a Technical Audience</title><link href="https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience.html" rel="alternate" type="text/html" title="Developing Code for a Technical Audience" /><published>2018-03-25T14:10:33-04:00</published><updated>2018-03-25T14:10:33-04:00</updated><id>https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience</id><content type="html" xml:base="https://dsteinmo.github.io/blog/update/2018/03/25/programming-for-a-technical-audience.html">&lt;p&gt;Most novice programmers tend to write code for an audience of one - themselves. They often write unformatted and/or unreadable code that is indecipherable by anyone else. This is how I started out writing my &lt;code class=&quot;highlighter-rouge&quot;&gt;MATLAB&lt;/code&gt; and python scripts in grad school, and much of my code that’s left over from those days remains in this state.&lt;/p&gt;
 
 &lt;p&gt;As programmers mature, they tend to expose themselves to code that is not their own. Learning to read other developers’ code is a learning curve in and of itself. At some point, especially if they are writing code in the software industry, developers are told to “write code to be readable by other developers.” Although this is a nebulous statement on its own, it opens up doors to conversations around proper formatting, indentation, naming conventions, and so on. Rules and best practices begin to emerge for enforcing and invoking these rules. Hopefully the rules are also backed by some kind of automation, e.g., linters and formatting utilities, where possible. Other best practices, like naming variables and functions such that the code is as self-documenting as possible, are enforced on an honour-system basis or by a code review process.&lt;/p&gt;
 
