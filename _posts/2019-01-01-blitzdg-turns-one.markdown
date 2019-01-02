@@ -63,5 +63,3 @@ We're still thinking about what the priority stack for 2019 looks like, but here
 - 3D solvers and models for lakes.
 
 Want to help? Want a feature? Want to bump something up the priority stack? Join the conversation on our [slack workspace](https://wqcg.slack.com). We'd love to hear from you and what scientific problems you're working on!
-
-[I'm an inline-style link](https://www.google.com)
