@@ -84,10 +84,9 @@ class: center, middle,
 
 * E.g., A climate or weather model on a sphere, a Tsunami wave inundation prediction model in an ocean basin, turbulent flow around an aerofoil, etc.
 
-* In general impossible to solve with analytical tools, must resort to numerical approximation (i.e., computers).
-
 * Important in forecast and historical reanalysis products. 
-	* As we collect more measurements, uncertainty goes down and demand for more model accuracy goes up!
+	* As we collect more measurements.
+	* uncertainty goes down and demand for more accuracy goes up!
 
 * Already well-established set of GUI-driven engineering tools, e.g., Comsol Multiphysics, Fluent by Ansys CFX, OpenFOAM, ... , but can be limited in terms of physical scope, accuracy, and respecting energetics in a closed system.
 
@@ -116,7 +115,7 @@ class: center, middle,
 	</small>
 </div>
 
-* Early (automated) calculations were carried out in Fortran or Assembly (think 'Apollo missions').
+* Early (automated) calculations were carried out in Fortran or Assembly.
 
 ---
 # .blue[What are today's models written in?]
@@ -134,7 +133,7 @@ class: center, middle,
 # .blue[pyblitzdg: but why?]
 * Backend (*blitzdg*) in full C++: Efficient implementation details for Discontinuous Galerkin finite element methods.
 	* 2D elements: Triangles in unstructured meshes. 
-	* Quads are ~~WIP~~ in test.
+	* Quads are WIP / in test.
 	* 3D elements: Roadmapped.
 	* DG and CG support.
 
