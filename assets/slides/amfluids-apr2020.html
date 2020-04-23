@@ -84,7 +84,7 @@ Consider the general hyperbolic system
 $$
 \frac{\partial \mathbf{Q}}{\partial t} + \frac{\partial \mathbf{F}}{\partial x} + \frac{\partial \mathbf{G}}{\partial y} = \mathbf{0} \;.
 $$
-Suppose the domain \\(\Omega\\) has been subdivided into \\(K\\) elements \\(\Omega_k, k=1,\cdots ,K \\). In the DG method, we take the 
+Suppose the domain \\(\Omega\\) has been subdivided into \\(K\\) elements \\(\D_k, k=1,\cdots ,K \\). In the DG method, we take the 
 residual to be orthogonal to the space of test functions \\( \lbrace \ell_j^k \rbrace_1^{N_p}\\), and expand the solution with approximating polynomials
 taken from the same space. 
 
@@ -100,7 +100,7 @@ Similar idea, but test functions are defined over the full domain,
 
 $$ \phi_l = \left\lbrace
 	\begin{array}{c} 
-		\ell_j^k \quad \mbox{on} \quad \Omega_k , \\\\
+		\ell_j^k \quad \mbox{on} \quad \D_k , \\\\
 		0 \quad \mbox{elsewhere}
 	\end{array} 
 	\right.
