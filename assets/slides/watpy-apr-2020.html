@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 		<head>
-			<title>pyblitzdg: An Open-Source Python 3 Framework for Rapid Numerical Model Development</title>
+			<title>ChiPy Meetup: Boost.Python Tutorial</title>
 			<meta charset="utf-8">
 			<script src="remark-latest.min.js"></script>
 			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -58,7 +58,7 @@
 
 class: center, middle,
 
-# .blue[WatPy Meetup:]
+# .blue[ChiPy Meetup:]
 ## .blue[Boost.Python Tutorial] 
 
 ## Derek Steinmoeller
@@ -243,7 +243,7 @@ class LSERK4(Boost.Python.instance)
 # .blue[Easier builds with setuptools!]
 <pre>
 import setuptools
-from distutils.core imp
+from distutils.core import Extension
 setuptools.setup(
      name='pyblitzdg',  
      version='0.3.1',
@@ -273,10 +273,18 @@ setuptools.setup(
 	$ python setup.py bdist_wheel sdist
 </pre>
 
-## Check out `auditwheel` for bundling native dependencies with your project!!
+#### Check out `auditwheel` for bundling native dependencies with your project!!
+#### For publishing on PyPI, C++ packages must be ManyLinux2010 (PEP 571) or ManyLinux1 (PEP 513) compliant!
+<div class="center">
+	<img src ="manylinux1.png" />
+</div>
 
+---
 <br/>
-### .red[Any questions?]
+<br/><br/><br/><br/>
+# .blue[Thank you!]
+<br/>
+## .red[Any questions?]
 
 
 
